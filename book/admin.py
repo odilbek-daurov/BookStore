@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Book, Author, Category, Language
+from .models import Book, Author, Category, Language, Image
+
 # Register your models here.
 
 
@@ -15,6 +16,10 @@ class BookAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+class ImageInline(admin.TabularInline):
+    model = Image
+
+
 @admin.register(Language)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -22,8 +27,12 @@ class BookAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+admin.site.register(Image)
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title',)
     prepopulated_fields = {'slug': ('title',)}
     search_fields = ('title',)
+    inlines = [ImageInline]

@@ -5,7 +5,7 @@ from book.models import Book
 
 
 class MyUser(AbstractUser):
-    image = models.ImageField(upload_to='user/',null=True, blank=True)
+    image = models.ImageField(upload_to='user/', null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     gender = models.CharField(max_length=6, null=True, blank=True)

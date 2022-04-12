@@ -9,6 +9,7 @@ class Comment(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='user_comment')
     content = models.TextField()
     rating = models.PositiveIntegerField()
+    create_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.content
@@ -17,7 +18,8 @@ class Comment(models.Model):
 class Like(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='book_like')
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='user_like')
-    like = models.BooleanField()
+    # like = models.BooleanField()
 
     def __str__(self):
-        return self.like
+        return self.book
+
