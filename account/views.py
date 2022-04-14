@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import UserCreate
+from .forms import UserCreate, Profile
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -36,6 +36,10 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
+
+def checkout(request):
+    form = Profile(request.user)
+    return render(request, 'checkout.html', {'form': form})
 
 
 
