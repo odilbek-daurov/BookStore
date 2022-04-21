@@ -87,7 +87,7 @@
 									<span class="text-uppercase">QTY: </span>
 									<input class="input" type="number">
 								</div>
-								<button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+								<a href = "{% url 'basket' book.slug %}"><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button></a>
 								<div class="pull-right">
 									<a href="{% url 'liked' book.slug %}"><strong>{{ book.like }} </strong><button class="main-btn icon-btn"><i class="fa fa-heart"></i></button></a>
 									<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
@@ -148,7 +148,7 @@
 										<div class="col-md-6">
 											<h4 class="text-uppercase">Write Your Review</h4>
 											<p>Your email address will not be published.</p>
-											<form class="review-form" method="post">
+											<form class="review-form" method="post" id="addCommentForm" data-url="{% url 'book_detail' book.slug">
                                                 {% csrf_token %}
 												<div class="form-group">
                                                     <textarea class="input"  type="text" placeholder="Your Name" name="content"></textarea>
@@ -167,7 +167,7 @@
 														</div>
 													</div>
 												</div>
-												<button class="primary-btn">Submit</button>
+												<button class="primary-btn" type="button" id="addComment">Submit</button>
 											</form>
 										</div>
 									</div>
@@ -224,7 +224,7 @@
 							<div class="product-btns">
 								<a href="{% url 'liked' book.slug %}"><button class="main-btn icon-btn"><i class="fa fa-heart"></i></button></a>
 								<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
-								<button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+								<a href = '{% url 'basket' book.slug %}'><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button></a>
 							</div>
 						</div>
 					</div>
@@ -239,5 +239,12 @@
 		<!-- /container -->
 	</div>
 	<!-- /section -->
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- <script {% static "js.comment.js" %}></script> -->
+
+	<script type="te">
+
+	</script>
 
 {% endblock content %}

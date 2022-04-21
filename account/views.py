@@ -1,7 +1,11 @@
-from django.shortcuts import render, redirect
-from .forms import UserCreate, Profile
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import UserCreate, Profile, ChangePasswordForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from book.models import Book
+from .models import Order, MyUser
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -37,9 +41,52 @@ def logout_view(request):
     return redirect('home')
 
 
-def checkout(request):
-    form = Profile(request.user)
-    return render(request, 'checkout.html', {'form': form})
 
 
+
+def basket(request, slug):
+    book = Book.objects.get(slug=slug)
+    
+    try:
+        basket = Order.objects.get(book=book, user = request.user)
+        if basket:
+            return redirect('home')
+    except ObjectDoesNotExist:
+        Order.objects.create(book=book, user = request.user)
+    
+    return redirect('home')
+
+
+def profile_edit(request, id):
+    user = get_object_or_404(MyUser, id=id)
+    basket = Order.objects.filter(user=user)
+    form = Profile(instance=user)
+    if request.method == "POST":
+        form = Profile(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+
+    context = {
+        'form': form,
+        'product': basket,
+    }
+
+    return render(request, 'checkout.html', context)
+
+
+def password_change(request):
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    
+    form = ChangePasswordForm(request.user)
+    
+    context = {
+        'form': form,
+    }
+    
+    return render(request, 'change_password.html', context)
 

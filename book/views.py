@@ -15,7 +15,7 @@ def home(request):
     else:
         books = Book.objects.all()
 
-    p = Paginator(books, 1)  # creating a paginator object
+    p = Paginator(books, 6)  # creating a paginator object
     # getting the desired page number from url
     page_number = request.GET.get('page')
     try:
