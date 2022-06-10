@@ -89,7 +89,13 @@
 								</div>
 								<a href = "{% url 'basket' book.slug %}"><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button></a>
 								<div class="pull-right">
-									<a href="{% url 'liked' book.slug %}"><strong>{{ book.like }} </strong><button class="main-btn icon-btn"><i class="fa fa-heart"></i></button></a>
+									<!-- like -->
+									<span id="likeAll">{{ book.like }}</span>
+                                    <button class="main-btn icon-btn" value="{{ book.slug }}" id="likeButton">
+                                        <i class="fa fa-heart"></i>
+                                    </button>
+									<!-- likeend -->
+
 									<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
 									<button class="main-btn icon-btn"><i class="fa fa-share-alt"></i></button>
 								</div>
@@ -148,7 +154,7 @@
 										<div class="col-md-6">
 											<h4 class="text-uppercase">Write Your Review</h4>
 											<p>Your email address will not be published.</p>
-											<form class="review-form" method="post" id="addCommentForm" data-url="{% url 'book_detail' book.slug">
+											<form class="review-form" method="post" >
                                                 {% csrf_token %}
 												<div class="form-group">
                                                     <textarea class="input"  type="text" placeholder="Your Name" name="content"></textarea>
@@ -167,7 +173,7 @@
 														</div>
 													</div>
 												</div>
-												<button class="primary-btn" type="button" id="addComment">Submit</button>
+												<button class="primary-btn" type="button" >Submit</button>
 											</form>
 										</div>
 									</div>
@@ -243,8 +249,23 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<!-- <script {% static "js.comment.js" %}></script> -->
 
-	<script type="te">
-
+	<script type="text/javascript">
+		$(document).on('click', '#likeButton', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "like" %}',
+                data: {
+                    book_slug: $('#likeButton').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    action: 'post'
+                },
+                success: function (json) {
+                    document.getElementById("likeAll").innerHTML = json['book_like']
+                    {#console.log(json)#}
+                }
+            })
+        })
 	</script>
 
 {% endblock content %}

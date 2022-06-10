@@ -1,13 +1,28 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from .models import Book, Image, Author, Language, Category
-from django.core.paginator import EmptyPage, Paginator, PageNotAnInteger
+from django.core.paginator import EmptyPage, Paginator
 from comment.models import Comment, Like
 from comment.forms import CommentForm
 # Create your views here.
 
+from django.http import JsonResponse
+
+
+def home_list(request):
+    rating_product = Book.objects.order_by('-rating_avg')[:3]
+    last_product = Book.objects.order_by('-create_at')[:4]
+    like_product = Book.objects.order_by('-like')
+
+    context = {
+        'rating_product': rating_product,
+        'last_product': last_product,
+        'like_product': like_product,
+    }
+    return render(request, 'home.html',context)
+
 
 def home(request):
-    top_book = Book.objects.order_by('-rating_avg')
+    top_book = Book.objects.order_by('-rating_avg')[:3]
     ordering = request.GET.get('ordering')
 
     if ordering:
@@ -15,8 +30,8 @@ def home(request):
     else:
         books = Book.objects.all()
 
-    p = Paginator(books, 6)  # creating a paginator object
-    # getting the desired page number from url
+    p = Paginator(books, 6)
+
     page_number = request.GET.get('page')
     try:
         page_obj = p.get_page(page_number)  # returns the desired page object
@@ -92,8 +107,30 @@ def like(request, slug):
     return redirect('detail', book.slug)
 
 
-def author_book(request, slug):
-    author = Author.objects.get(first_name=slug)
+
+def likes(request):
+    if request.POST.get('action') == 'post':
+        slug = request.POST.get('book_slug')
+        user = request.user
+        book = Book.objects.get(slug=slug)
+        current_like = book.like
+        liked = Like.objects.filter(user=user, book=book).count()
+
+        if not liked:
+            Like.objects.create(user=user, book=book)
+            current_like += 1
+        else:
+            like = Like.objects.filter(user=user, book=book)
+            like.delete()
+            current_like -= 1
+        book.like = current_like
+        book.save()
+
+        return JsonResponse({'book_likes': current_like, })
+
+
+def author_book(request, first):
+    author = Author.objects.get(first_name=first)
     books = Book.objects.filter(author=author)
 
     context = {
